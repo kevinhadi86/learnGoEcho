@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -12,26 +13,32 @@ import (
 
 func main() {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-
-		data := getData()
-		return c.String(http.StatusOK, data)
-	})
+	e.GET("/", defaultRoute)
 	e.Start(":1111")
 }
 
-func getData() string {
-	response, err := http.Get("http://pokeapi.co/api/v2/pokedex/kanto/")
+func defaultRoute(c echo.Context) error {
+	data := getData()
+	return c.JSON(http.StatusOK, data)
+}
+
+func getData() map[string]interface{} {
+
+	r, err := http.Get("http://pokeapi.co/api/v2/pokedex/kanto/")
 
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 
-	responseData, err := ioutil.ReadAll(response.Body)
+	responseData, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
-	return string(responseData)
+
+	m := make(map[string]interface{})
+	if err := json.Unmarshal(responseData, &m); err != nil {
+		log.Fatal(err)
+	}
+	return m
 }
