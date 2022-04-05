@@ -2,11 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/labstack/echo/v4"
 )
@@ -25,10 +23,8 @@ func defaultRoute(c echo.Context) error {
 func getData() map[string]interface{} {
 
 	r, err := http.Get("http://pokeapi.co/api/v2/pokedex/kanto/")
-
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	responseData, err := ioutil.ReadAll(r.Body)
