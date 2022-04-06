@@ -1,37 +1,48 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
+	"github.com/labstack/echo/v4"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-
-	"github.com/labstack/echo/v4"
 )
+
+const ERROR_MESSAGE = "FAILED_TO_GET_DATA"
+const GET_ALL_URL = "http://pokeapi.co/api/v2/pokedex/kanto/"
 
 func main() {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-
-		data := getData()
-		return c.String(http.StatusOK, data)
-	})
+	e.GET("/", getAllData)
 	e.Start(":1111")
 }
 
-func getData() string {
-	response, err := http.Get("http://pokeapi.co/api/v2/pokedex/kanto/")
+func getAllData(c echo.Context) error {
+	data, err := callGetAllApi(GET_ALL_URL)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, ERROR_MESSAGE)
+	}
+	return c.JSON(http.StatusOK, data)
+}
+
+func callGetAllApi(url string) (map[string]interface{}, error) {
+	response, err := http.Get(url)
 
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		log.Println(err)
+		return nil, err
 	}
 
 	responseData, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+		log.Println(err)
+		return nil, err
 	}
-	return string(responseData)
+
+	result := make(map[string]interface{})
+	if err := json.Unmarshal(responseData, &result); err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return result, nil
 }
