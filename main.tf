@@ -49,7 +49,26 @@ resource "google_cloud_run_service_iam_policy" "no_auth" {
   policy_data = data.google_iam_policy.no_auth.policy_data
 }
 
+resource "google_service_account" "my_account" {
+  account_id   = "myaccount"
+  display_name = "My Service Account"
+}
+
+resource "google_service_account_key" "my_key" {
+  service_account_id = google_service_account.my_account.name
+  public_key_type    = "TYPE_X509_PEM_FILE"
+}
+
+resource "google_project_iam_member" "firestore_owner_binding" {
+  project = "fabled-citadel-342513"
+  role    = "roles/owner"
+  member  = "serviceAccount:${google_service_account.my_account.email}"
+}
+
 # Return service URL
 output "url" {
   value = google_cloud_run_service.my_web_app.status[0].url
+}
+output "service_account_key" {
+  value = google_service_account_key.my_key.private_key
 }
