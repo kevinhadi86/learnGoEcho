@@ -71,4 +71,5 @@ output "url" {
 }
 output "service_account_key" {
   value = google_service_account_key.my_key.private_key
+  sensitive = true
 }
