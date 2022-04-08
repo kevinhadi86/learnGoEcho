@@ -6,7 +6,7 @@ provider "google" {
 
 # Deploy image to Cloud Run
 resource "google_cloud_run_service" "my_web_app" {
-  name = "my_web_app"
+  name = "my-web-app"
   location = "asia-southeast2"
   template {
     spec {
