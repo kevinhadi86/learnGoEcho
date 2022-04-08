@@ -1,5 +1,7 @@
 provider "google" {
-  project = "learn-go-echo"
+  project = "fabled-citadel-342513"
+  region = "asia-southeast2"
+  zone = "asia-southeast2-a"
 }
 
 # Deploy image to Cloud Run
