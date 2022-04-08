@@ -11,7 +11,7 @@ resource "google_cloud_run_service" "my_web_app" {
   template {
     spec {
       containers {
-        image = "kevinhadi86/learn-go-echo"
+        image = "asia.gcr.io/fabled-citadel-342513/learn-go-echo"
         ports {
           container_port = 1111
         }
