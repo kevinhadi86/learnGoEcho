@@ -14,12 +14,12 @@ jobs:
           credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
       - name: Set up cloud SDK
         uses: google-github-actions/setup-gcloud@v0
-      - name: Use gcloud CLI
-        run: 'gcloud info'
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.1.7
+      - name: Gcloud docker configure asia gcr
+        run: 'gcloud auth configure-docker asia.gcr.io -q'
       - name: Build docker image
         run: 'docker build -t asia.gcr.io/fabled-citadel-342513/learn-go-echo .'
       - name: Push docker image
@@ -29,4 +29,4 @@ jobs:
       - name: Terraform Plan
         run: 'terraform plan'
       - name: Terraform Apply
-        run: 'terraform apply -auto-approve'
+        run: 'terraform apply -auto-approve -replace=google_cloud_run_service.my_web_app'

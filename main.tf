@@ -1,3 +1,11 @@
+terraform {
+  backend "etcdv3" {
+    endpoints = ["34.101.99.237:2379"]
+    lock      = true
+    prefix    = "/learn-go-echo"
+  }
+}
+
 # Semacem import untuk nunjukin kita ngambil resource dari mana
 # dalam case ini kita import gogole, karna kita butuh resource google
 provider "google" {
